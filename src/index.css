@@ -312,6 +312,81 @@ h1 {
   color: var(--text);
 }
 
+/* Optional rest-day session */
+.optional {
+  margin-top: 16px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 16px 18px 18px;
+}
+
+.optional-label {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.optional h2 {
+  margin: 4px 0 6px;
+  font-size: 1.5rem;
+}
+
+.optional h2 span {
+  color: var(--muted);
+  font-weight: 500;
+  font-size: 1.1rem;
+}
+
+.optional p:not(.optional-label) {
+  margin: 0 0 14px;
+  color: var(--muted);
+  font-size: 1.05rem;
+  line-height: 1.4;
+}
+
+.primary-button {
+  width: 100%;
+  min-height: 50px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--accent);
+  color: #fff;
+  font: inherit;
+  font-size: 1.15rem;
+  font-weight: 700;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+@media (prefers-color-scheme: dark) {
+  .primary-button {
+    color: #000;
+  }
+}
+
+.kicker {
+  margin: 6px 0 -2px;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.link-button.inline {
+  padding: 8px 4px;
+  margin: -8px 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.weight.bodyweight {
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 1.05rem;
+}
+
 /* Footer */
 .footer {
   margin-top: 28px;

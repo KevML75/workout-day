@@ -14,7 +14,16 @@ export function formatSetsReps(ex: Exercise): string {
   return `${ex.sets} × ${ex.reps}${ex.repsNote ? ` ${ex.repsNote}` : ''}`
 }
 
+/** Starting weight range, e.g. "15–25 lb" or "bodyweight–15 lb". */
 export function formatWeight(ex: Exercise): string {
+  if (!ex.weightLb) return 'bodyweight'
   const { min, max } = ex.weightLb
-  return min === max ? `${min} lb` : `${min}–${max} lb`
+  const low = min === 0 ? 'bodyweight' : `${min}`
+  return min === max ? `${low} lb` : `${low}–${max} lb`
+}
+
+/** A logged or selected weight; 0 means bodyweight. */
+export function formatLb(weightLb: number, short = false): string {
+  if (weightLb === 0) return short ? 'BW' : 'bodyweight'
+  return `${weightLb} lb`
 }

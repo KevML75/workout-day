@@ -1,9 +1,10 @@
 // Pure workout-log logic: what was done each day. No storage or UI here.
 
-import { DUMBBELL, type Exercise, type WorkoutLetter } from '../data/workouts'
+import { DUMBBELL, type Exercise, type SessionId } from '../data/workouts'
 
 export interface SetLog {
   reps: number
+  /** Per dumbbell; 0 means bodyweight. */
   weightLb: number
   /** ISO timestamp when the set was logged. */
   at: string
@@ -19,7 +20,8 @@ export interface ExerciseLog {
 export interface DayLog {
   /** Local calendar date, YYYY-MM-DD. */
   date: string
-  letter: WorkoutLetter
+  /** Session done that day (A, B, or the rest-day session); named `letter` for saved-data compatibility. */
+  letter: SessionId
   exercises: ExerciseLog[]
 }
 
@@ -51,7 +53,7 @@ export function lastWeight(history: History, name: string, beforeDate: string): 
  * Today's log for the planned exercises: the saved entry where one exists, otherwise a fresh
  * one that starts at the last weight used (or the bottom of the starting range).
  */
-export function dayLogFor(history: History, date: string, letter: WorkoutLetter, exercises: Exercise[]): DayLog {
+export function dayLogFor(history: History, date: string, letter: SessionId, exercises: Exercise[]): DayLog {
   const saved = history[date]
   return {
     date,
@@ -60,7 +62,7 @@ export function dayLogFor(history: History, date: string, letter: WorkoutLetter,
       (ex) =>
         saved?.exercises.find((e) => e.name === ex.name) ?? {
           name: ex.name,
-          weightLb: lastWeight(history, ex.name, date) ?? ex.weightLb.min,
+          weightLb: lastWeight(history, ex.name, date) ?? ex.weightLb?.min ?? 0,
           sets: [],
         },
     ),
@@ -86,9 +88,15 @@ export function undoSet(day: DayLog, index: number): DayLog {
   return updateExercise(day, index, (e) => ({ ...e, sets: e.sets.slice(0, -1) }))
 }
 
-/** Change the selected weight, snapped to the dumbbell's increments and range. */
-export function setWeight(day: DayLog, index: number, weightLb: number): DayLog {
-  const snapped = Math.round(weightLb / DUMBBELL.stepLb) * DUMBBELL.stepLb
-  const clamped = Math.min(DUMBBELL.maxLb, Math.max(DUMBBELL.minLb, snapped))
-  return updateExercise(day, index, (e) => ({ ...e, weightLb: clamped }))
+/**
+ * Step the selected weight up or down one dumbbell increment, within the dumbbell's range.
+ * With `allowBodyweight`, stepping below the lightest dumbbell goes to bodyweight (0).
+ */
+export function stepWeight(day: DayLog, index: number, direction: 1 | -1, allowBodyweight: boolean): DayLog {
+  const { minLb, maxLb, stepLb } = DUMBBELL
+  const current = day.exercises[index].weightLb
+  let next = Math.round((current + direction * stepLb) / stepLb) * stepLb
+  if (allowBodyweight && next < minLb) next = direction > 0 ? minLb : 0
+  next = Math.min(maxLb, Math.max(allowBodyweight ? 0 : minLb, next))
+  return updateExercise(day, index, (e) => ({ ...e, weightLb: next }))
 }

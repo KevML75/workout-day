@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { WORKOUTS } from '../data/workouts'
-import { dateKey, dayLogFor, lastWeight, logSet, setWeight, undoSet, type History } from './log'
+import { REST_DAY_SESSION, WORKOUTS } from '../data/workouts'
+import { dateKey, dayLogFor, lastWeight, logSet, stepWeight, undoSet, type History } from './log'
 
 const NOW = new Date('2026-10-28T19:00:00Z')
 
@@ -39,7 +39,7 @@ describe('logging sets', () => {
   const fresh = () => dayLogFor({}, '2026-10-28', 'B', WORKOUTS.B)
 
   it('records reps, the selected weight and time, up to the total', () => {
-    let day = setWeight(fresh(), 0, 22.5)
+    let day = stepWeight(fresh(), 0, 1, false) // 20 → 22.5
     day = logSet(day, 0, 10, 3, NOW)
     expect(day.exercises[0].sets).toEqual([{ reps: 10, weightLb: 22.5, at: NOW.toISOString() }])
     day = logSet(logSet(day, 0, 10, 3, NOW), 0, 10, 3, NOW)
@@ -52,10 +52,32 @@ describe('logging sets', () => {
     expect(undoSet(day, 1)).toBe(day)
   })
 
-  it('snaps weight to 2.5 lb and clamps to 5–90 lb', () => {
-    expect(setWeight(fresh(), 0, 23).exercises[0].weightLb).toBe(22.5)
-    expect(setWeight(fresh(), 0, 2.5).exercises[0].weightLb).toBe(5)
-    expect(setWeight(fresh(), 0, 95).exercises[0].weightLb).toBe(90)
+  it('steps weight by 2.5 lb within 5–90 lb', () => {
+    let day = fresh() // first exercise starts at 20
+    day = stepWeight(day, 0, 1, false)
+    expect(day.exercises[0].weightLb).toBe(22.5)
+    for (let i = 0; i < 10; i++) day = stepWeight(day, 0, -1, false)
+    expect(day.exercises[0].weightLb).toBe(5)
+    for (let i = 0; i < 40; i++) day = stepWeight(day, 0, 1, false)
+    expect(day.exercises[0].weightLb).toBe(90)
+  })
+
+  it('steps between bodyweight and the lightest dumbbell when allowed', () => {
+    let day = dayLogFor({}, '2026-10-29', 'legs', REST_DAY_SESSION.exercises)
+    const lunge = 2
+    expect(day.exercises[lunge].weightLb).toBe(0)
+    expect(stepWeight(day, lunge, -1, true).exercises[lunge].weightLb).toBe(0)
+    day = stepWeight(day, lunge, 1, true)
+    expect(day.exercises[lunge].weightLb).toBe(5)
+    day = stepWeight(day, lunge, 1, true)
+    expect(day.exercises[lunge].weightLb).toBe(7.5)
+    day = stepWeight(stepWeight(day, lunge, -1, true), lunge, -1, true)
+    expect(day.exercises[lunge].weightLb).toBe(0)
+  })
+
+  it('starts bodyweight-only moves at 0', () => {
+    const day = dayLogFor({}, '2026-10-29', 'legs', REST_DAY_SESSION.exercises)
+    expect(day.exercises.map((e) => e.weightLb)).toEqual([25, 20, 0, 0, 0])
   })
 })
 

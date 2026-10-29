@@ -2,6 +2,9 @@
 
 export type WorkoutLetter = 'A' | 'B'
 
+/** A scheduled workout, or the optional rest-day session. */
+export type SessionId = WorkoutLetter | 'legs'
+
 export interface Exercise {
   name: string
   /** Muscles worked, primary first. */
@@ -10,8 +13,11 @@ export interface Exercise {
   reps: number
   /** Extra qualifier shown after reps, e.g. "each arm". */
   repsNote?: string
-  /** Starting weight range in lb, per dumbbell. */
-  weightLb: { min: number; max: number }
+  /**
+   * Starting weight range in lb, per dumbbell. Omitted for bodyweight-only moves;
+   * min 0 means start at bodyweight and add dumbbells later.
+   */
+  weightLb?: { min: number; max: number }
   /** Extra qualifier shown after weight, e.g. "one dumbbell". */
   weightNote?: string
 }
@@ -62,5 +68,46 @@ export const SHARED_NOTES = [
   'When all 3 sets hit the top reps, move the pin up 5 lb next session.',
   'Make sure the selector pin is fully seated before each set.',
 ]
+
+export const SESSION_TITLES: Record<SessionId, string> = {
+  A: 'Workout A',
+  B: 'Workout B',
+  legs: 'Legs & core',
+}
+
+/** Optional rest-day session: lower body and core, so upper-body recovery isn't affected. */
+export const REST_DAY_SESSION = {
+  id: 'legs' as const,
+  duration: '~20 min',
+  exercises: [
+    {
+      name: 'Goblet squat',
+      targets: ['Quads', 'Glutes'],
+      sets: 3,
+      reps: 10,
+      weightLb: { min: 25, max: 35 },
+      weightNote: 'one dumbbell',
+    },
+    { name: 'Romanian deadlift', targets: ['Hamstrings', 'Glutes'], sets: 3, reps: 10, weightLb: { min: 20, max: 30 } },
+    {
+      name: 'Reverse lunge',
+      targets: ['Quads', 'Glutes'],
+      sets: 2,
+      reps: 8,
+      repsNote: 'each leg',
+      weightLb: { min: 0, max: 15 },
+    },
+    { name: 'Glute bridge', targets: ['Glutes'], sets: 2, reps: 15 },
+    { name: 'Dead bug', targets: ['Core'], sets: 2, reps: 8, repsNote: 'each side' },
+  ] satisfies Exercise[],
+  notes: [
+    'Warm-up 3 min: march in place, 10 leg swings per leg, 10 bodyweight squats.',
+    'Keep it easy: end each set with about 3 reps left in the tank.',
+    'Rest about 60 s between sets.',
+    'Romanian deadlift: soft knees, push your hips back, keep the dumbbells close to your legs.',
+    'Swap dead bug for a 30 s plank if you prefer.',
+    'Feeling run down before a workout day? Skip it.',
+  ],
+}
 
 export const REST_NOTE = 'Rest day. A walk or light stretching is a good addition.'

@@ -3,7 +3,8 @@
 A tiny phone-first web app that tells you what to do today: a rest day, or Workout A/B
 with five dumbbell exercises. Swipe a card left to log a set at the selected weight, swipe
 right to undo. Past sessions are under **History**, and **Export history (JSON)** saves a
-backup file. Works offline once added to the iPhone home screen.
+backup file. On rest days there's an optional ~20 min legs & core session, logged the same
+way. Works offline once added to the iPhone home screen.
 
 The spec is in [workout-spec-app.md](workout-spec-app.md).
 
