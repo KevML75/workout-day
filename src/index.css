@@ -261,7 +261,7 @@ h1 {
 
 /* Notes */
 .notes {
-  margin-top: 20px;
+  margin-bottom: 12px;
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: 16px;

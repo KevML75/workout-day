@@ -1,7 +1,13 @@
 import { describe, expect, it } from 'vitest'
-import { getTodayPlan } from './plan'
+import { getTodayPlan, type Rotation } from './plan'
 
 const START = '2026-10-26'
+
+/** The original alternating schedule, kept to test multi-week rotations. */
+const ALTERNATING: Rotation = [
+  { 1: 'A', 3: 'B', 5: 'A' },
+  { 1: 'B', 3: 'A', 5: 'B' },
+]
 
 /** Local date at a given hour (defaults to noon). */
 function day(iso: string, hour = 12, minute = 0): Date {
@@ -9,34 +15,34 @@ function day(iso: string, hour = 12, minute = 0): Date {
   return new Date(y, m - 1, d, hour, minute)
 }
 
-function summary(date: Date): string {
-  const plan = getTodayPlan(date, START)
+function summary(date: Date, rotation?: Rotation): string {
+  const plan = getTodayPlan(date, START, rotation)
   return plan.type === 'workout' ? plan.letter : 'rest'
 }
 
-describe('getTodayPlan', () => {
+describe('getTodayPlan (weekly Mon A / Wed B / Fri C)', () => {
   it.each([
-    ['2026-10-26', 'A'], // Mon, week 1
+    ['2026-10-26', 'A'], // Mon
     ['2026-10-27', 'rest'],
-    ['2026-10-28', 'B'],
-    ['2026-10-30', 'A'],
+    ['2026-10-28', 'B'], // Wed
+    ['2026-10-29', 'rest'],
+    ['2026-10-30', 'C'], // Fri
     ['2026-10-31', 'rest'],
     ['2026-11-01', 'rest'],
-    ['2026-11-02', 'B'], // Mon, week 2
-    ['2026-11-04', 'A'],
-    ['2026-11-06', 'B'],
-    ['2026-11-09', 'A'], // Mon, week 3
-    ['2026-10-19', 'B'], // before the start date
+    ['2026-11-02', 'A'], // same every week
+    ['2026-11-04', 'B'],
+    ['2026-11-06', 'C'],
+    ['2026-10-19', 'A'], // before the start date
   ])('%s → %s', (iso, expected) => {
     expect(summary(day(iso))).toBe(expected)
   })
 
-  it('returns the five exercises on a workout day', () => {
-    const plan = getTodayPlan(day('2026-10-28'), START)
+  it('returns five chest-focused exercises on Friday', () => {
+    const plan = getTodayPlan(day('2026-10-30'), START)
     expect(plan.type).toBe('workout')
     if (plan.type !== 'workout') return
     expect(plan.exercises).toHaveLength(5)
-    expect(plan.exercises[0].name).toBe('Bent-over two-arm row')
+    expect(plan.exercises[0].name).toBe('Dumbbell floor press')
   })
 
   it('uses the local date regardless of time of day', () => {
@@ -45,21 +51,36 @@ describe('getTodayPlan', () => {
     expect(summary(day('2026-10-28', 23, 59))).toBe('B')
   })
 
-  it('handles the DST change (Nov 1, 2026 in the US)', () => {
-    expect(summary(day('2026-11-02', 0, 30))).toBe('B')
-    expect(summary(day('2026-11-09', 0, 30))).toBe('A')
-  })
-
   it.each([
     ['2026-10-27', '2026-10-28', 'B'], // Tue → Wed B
-    ['2026-10-31', '2026-11-02', 'B'], // Sat → Mon B
-    ['2026-11-01', '2026-11-02', 'B'], // Sun → Mon B
-    ['2026-11-05', '2026-11-06', 'B'], // Thu → Fri B
+    ['2026-10-29', '2026-10-30', 'C'], // Thu → Fri C
+    ['2026-10-31', '2026-11-02', 'A'], // Sat → Mon A
+    ['2026-11-01', '2026-11-02', 'A'], // Sun → Mon A
   ])('rest day %s → next workout %s %s', (iso, nextIso, letter) => {
     const plan = getTodayPlan(day(iso), START)
     expect(plan.type).toBe('rest')
     if (plan.type !== 'rest') return
     expect(plan.next.letter).toBe(letter)
     expect(plan.next.date.getTime()).toBe(day(nextIso, 0).getTime())
+  })
+})
+
+describe('getTodayPlan (multi-week rotation)', () => {
+  it.each([
+    ['2026-10-26', 'A'], // Mon, week 1
+    ['2026-10-28', 'B'],
+    ['2026-10-30', 'A'],
+    ['2026-11-02', 'B'], // Mon, week 2
+    ['2026-11-04', 'A'],
+    ['2026-11-06', 'B'],
+    ['2026-11-09', 'A'], // Mon, week 3
+    ['2026-10-19', 'B'], // before the start date
+  ])('%s → %s', (iso, expected) => {
+    expect(summary(day(iso), ALTERNATING)).toBe(expected)
+  })
+
+  it('handles the DST change (Nov 1, 2026 in the US)', () => {
+    expect(summary(day('2026-11-02', 0, 30), ALTERNATING)).toBe('B')
+    expect(summary(day('2026-11-09', 0, 30), ALTERNATING)).toBe('A')
   })
 })

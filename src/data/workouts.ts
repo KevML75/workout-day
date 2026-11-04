@@ -1,6 +1,6 @@
 // Workout program data. Kept free of UI code so it can be ported (e.g. to Swift).
 
-export type WorkoutLetter = 'A' | 'B'
+export type WorkoutLetter = 'A' | 'B' | 'C'
 
 /** A scheduled workout, or the optional rest-day session. */
 export type SessionId = WorkoutLetter | 'legs'
@@ -31,11 +31,12 @@ export const PROGRAM_START_MONDAY = '2026-10-26'
 /** Workout days as JS weekday numbers (0 = Sunday). */
 export const WORKOUT_WEEKDAYS = [1, 3, 5] as const
 
-/** Letter for each workout day, in odd (week 1, 3, …) and even program weeks. */
-export const WEEK_ROTATION: Record<'odd' | 'even', Record<number, WorkoutLetter>> = {
-  odd: { 1: 'A', 3: 'B', 5: 'A' },
-  even: { 1: 'B', 3: 'A', 5: 'B' },
-}
+/**
+ * Workout for each workout day (JS weekday → letter), one entry per program week, repeating.
+ * A single week means the same plan every week. For the old alternating schedule use:
+ * [{ 1: 'A', 3: 'B', 5: 'A' }, { 1: 'B', 3: 'A', 5: 'B' }]
+ */
+export const WEEK_ROTATION: Record<number, WorkoutLetter>[] = [{ 1: 'A', 3: 'B', 5: 'C' }]
 
 export const WORKOUTS: Record<WorkoutLetter, Exercise[]> = {
   A: [
@@ -59,19 +60,35 @@ export const WORKOUTS: Record<WorkoutLetter, Exercise[]> = {
     { name: 'Hammer curl', targets: ['Biceps', 'Forearms'], sets: 3, reps: 10, weightLb: { min: 15, max: 20 } },
     { name: 'Triceps kickback', targets: ['Triceps'], sets: 3, reps: 12, weightLb: { min: 10, max: 15 } },
   ],
+  C: [
+    { name: 'Dumbbell floor press', targets: ['Chest', 'Triceps'], sets: 3, reps: 10, weightLb: { min: 20, max: 30 } },
+    { name: 'Push-up', targets: ['Chest', 'Shoulders', 'Triceps'], sets: 3, reps: 10 },
+    { name: 'Floor fly', targets: ['Chest'], sets: 3, reps: 12, weightLb: { min: 10, max: 15 } },
+    {
+      name: 'Dumbbell pullover',
+      targets: ['Chest', 'Lats'],
+      sets: 3,
+      reps: 12,
+      weightLb: { min: 15, max: 25 },
+      weightNote: 'one dumbbell',
+    },
+    { name: 'Squeeze press', targets: ['Inner chest', 'Triceps'], sets: 3, reps: 10, weightLb: { min: 15, max: 20 } },
+  ],
 }
 
+/** Extra notes for a specific workout, shown after the shared notes. */
+export const WORKOUT_NOTES: Partial<Record<WorkoutLetter, string[]>> = {}
+
 export const SHARED_NOTES = [
-  'Warm-up 5 min: arm circles, then 1 light set of the first exercise.',
-  'Rest 60–90 s between sets.',
-  'Last 2 reps should be hard with clean form; adjust by 5 lb if not.',
-  'When all 3 sets hit the top reps, move the pin up 5 lb next session.',
-  'Make sure the selector pin is fully seated before each set.',
+  'Warm up 5 min with arm circles, plus 1 light set of the first exercise.',
+  'Rest 60–90 s. Last 2 reps should be hard but clean.',
+  'All 3 sets felt easy? Add 5 lb next time.',
 ]
 
 export const SESSION_TITLES: Record<SessionId, string> = {
   A: 'Workout A',
   B: 'Workout B',
+  C: 'Workout C',
   legs: 'Legs & core',
 }
 
@@ -101,12 +118,7 @@ export const REST_DAY_SESSION = {
     { name: 'Dead bug', targets: ['Core'], sets: 2, reps: 8, repsNote: 'each side' },
   ] satisfies Exercise[],
   notes: [
-    'Warm-up 3 min: march in place, 10 leg swings per leg, 10 bodyweight squats.',
-    'Keep it easy: end each set with about 3 reps left in the tank.',
-    'Rest about 60 s between sets.',
-    'Romanian deadlift: soft knees, push your hips back, keep the dumbbells close to your legs.',
-    'Swap dead bug for a 30 s plank if you prefer.',
-    'Feeling run down before a workout day? Skip it.',
+    'Warm up 3 min: march, leg swings, 10 squats.',
   ],
 }
 

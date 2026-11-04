@@ -5,6 +5,7 @@ import {
   REST_NOTE,
   SESSION_TITLES,
   SHARED_NOTES,
+  WORKOUT_NOTES,
   type Exercise,
   type SessionId,
 } from './data/workouts'
@@ -45,7 +46,12 @@ export default function App() {
       {plan.type === 'rest' ? (
         <RestDay key={dateKey(today)} date={today} next={plan.next} />
       ) : (
-        <Session date={today} session={plan.letter} exercises={plan.exercises} notes={SHARED_NOTES} />
+        <Session
+          date={today}
+          session={plan.letter}
+          exercises={plan.exercises}
+          notes={[...SHARED_NOTES, ...(WORKOUT_NOTES[plan.letter] ?? [])]}
+        />
       )}
 
       <ExportFooter />
@@ -130,6 +136,15 @@ function Session({ date, session, exercises, notes }: SessionProps) {
       <h1>{SESSION_TITLES[session]}</h1>
       <p className="hint">{allDone ? 'All done. Nice work!' : 'Swipe left when you finish a set.'}</p>
 
+      <details className="notes">
+        <summary>Notes</summary>
+        <ul>
+          {notes.map((note) => (
+            <li key={note}>{note}</li>
+          ))}
+        </ul>
+      </details>
+
       <ol className="exercises">
         {exercises.map((ex, i) => {
           const log = day.exercises[i]
@@ -182,15 +197,6 @@ function Session({ date, session, exercises, notes }: SessionProps) {
           )
         })}
       </ol>
-
-      <details className="notes">
-        <summary>Notes</summary>
-        <ul>
-          {notes.map((note) => (
-            <li key={note}>{note}</li>
-          ))}
-        </ul>
-      </details>
     </section>
   )
 }

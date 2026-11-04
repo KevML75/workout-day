@@ -3,7 +3,7 @@
 ## Goal
 A tiny web app that, when opened, tells me what to do **today**:
 - **Rest day** → a simple "Rest day" screen, nothing else.
-- **Workout day** → the name of the workout (A or B) and its five exercises, each with sets, reps and starting weight.
+- **Workout day** → the name of the workout (A, B or C) and its five exercises, each with sets, reps and starting weight.
 
 Must work well on an iPhone (I'll mostly open it on my phone). A native iOS app may come later, so keep the workout data and day logic separate from the UI so they can be reused.
 
@@ -12,11 +12,10 @@ PowerBlock Elite EXP 90 adjustable dumbbells (5–90 lb per dumbbell, 2.5 lb inc
 
 ## Schedule rules
 - Workout days: **Monday, Wednesday, Friday**. All other days are rest days.
-- Workouts alternate across the week:
-  - **Odd program weeks:** Mon = A, Wed = B, Fri = A
-  - **Even program weeks:** Mon = B, Wed = A, Fri = B
-- Program week 1 starts on a configurable Monday: `PROGRAM_START_MONDAY = "2026-10-26"`.
-  - `weekIndex = floor((today − PROGRAM_START_MONDAY) in days / 7)`; week is "odd" when `weekIndex` is even (week 1, 3, 5…). Use a proper modulo so dates before the start date don't break.
+- Same plan every week: **Mon = A, Wed = B, Fri = C**.
+- The schedule is a list of weeks that repeats (`WEEK_ROTATION`), so a multi-week rotation is still possible. Program week 1 starts on a configurable Monday: `PROGRAM_START_MONDAY = "2026-10-26"`.
+  - `weekIndex = floor((today − PROGRAM_START_MONDAY) in days / 7)`; the week used is `WEEK_ROTATION[weekIndex mod length]`. Use a proper modulo so dates before the start date don't break.
+  - (Before 2026-11-04 the schedule alternated A/B: odd weeks Mon A, Wed B, Fri A; even weeks Mon B, Wed A, Fri B.)
 - Use the **device's local date** (not UTC). I'm in America/Los_Angeles, so a late-evening open must not jump to the next day.
 
 ## Workout data
@@ -40,12 +39,19 @@ Store this as a single data file (e.g. `workouts.json` or a typed `workouts.ts`)
 | 4 | Hammer curl | 3 × 10 | 15–20 lb |
 | 5 | Triceps kickback | 3 × 12 | 10–15 lb |
 
+### Workout C (chest, floor-based since there's no bench)
+| # | Exercise | Sets × Reps | Starting weight |
+|---|----------|-------------|-----------------|
+| 1 | Dumbbell floor press | 3 × 10 | 20–30 lb |
+| 2 | Push-up | 3 × 10 | bodyweight |
+| 3 | Floor fly | 3 × 12 | 10–15 lb |
+| 4 | Dumbbell pullover | 3 × 12 | 15–25 lb (one dumbbell) |
+| 5 | Squeeze press | 3 × 10 | 15–20 lb |
+
 ### Shared notes (show on workout days, collapsed or small)
-- Warm-up 5 min: arm circles, then 1 light set of the first exercise.
-- Rest 60–90 s between sets.
-- Last 2 reps should be hard with clean form; adjust by 5 lb if not.
-- When all 3 sets hit the top reps, move the pin up 5 lb next session.
-- Make sure the selector pin is fully seated before each set.
+- Warm up 5 min with arm circles, plus 1 light set of the first exercise.
+- Rest 60–90 s. Last 2 reps should be hard but clean.
+- All 3 sets felt easy? Add 5 lb next time.
 
 ### Rest day note
 "Rest day. A walk or light stretching is a good addition." Optionally show "Next workout: Wed — Workout B".
@@ -68,16 +74,20 @@ With `PROGRAM_START_MONDAY = 2026-10-26`:
 - Mon 2026-10-26 → Workout A
 - Tue 2026-10-27 → Rest
 - Wed 2026-10-28 → Workout B
-- Fri 2026-10-30 → Workout A
+- Fri 2026-10-30 → Workout C
 - Sat 2026-10-31 / Sun 2026-11-01 → Rest
-- Mon 2026-11-02 → Workout B
-- Wed 2026-11-04 → Workout A
-- Fri 2026-11-06 → Workout B
-- Mon 2026-11-09 → Workout A
-- A date before the start (e.g. Mon 2026-10-19) → Workout B (no crash, consistent alternation)
+- Mon 2026-11-02 → Workout A (same every week)
+- A date before the start (e.g. Mon 2026-10-19) → Workout A (no crash)
+- A two-week rotation still alternates correctly, including across the Nov 1 DST change.
 
-## Out of scope for v1 (possible later)
-- Logging weights/reps per set and remembering last session's weight.
-- "Done" checkmarks per exercise.
+## Added after v1
+- Swipe a card left to log a set (right to undo), with a per-exercise weight stepper; each session starts at the weight last used.
+- History screen and JSON export; data is stored on the device.
+- Muscle groups shown on each exercise.
+- Optional ~20 min legs & core session on rest days.
+- Workout C (chest) and a fixed Mon A / Wed B / Fri C week.
+
+## Out of scope for now (possible later)
+- Logging actual reps when short of the target.
 - Settings screen to change workout days or start date.
 - Native iOS app (SwiftUI) reusing the same data and day logic.
