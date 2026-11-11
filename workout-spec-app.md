@@ -21,7 +21,7 @@ PowerBlock Elite EXP 90 adjustable dumbbells (5–90 lb per dumbbell, 2.5 lb inc
 ## Workout data
 Store this as a single data file (e.g. `workouts.json` or a typed `workouts.ts`), not hard-coded in components.
 
-Each workout is full-body: one push, one pull and one leg exercise, plus two smaller ones (rebalanced 2026-11-09 so legs are trained 3×/week and chest 2×/week).
+Each workout is full-body: one push, one pull and one leg exercise, plus two smaller ones (rebalanced 2026-11-09 so legs are trained 3×/week and chest 2×/week). Order: big and technical lifts first, isolation last; on B the deadlift goes first so the lower back is fresh, and push-ups separate it from the bent-over row.
 
 ### Workout A (Mon)
 | # | Exercise | Sets × Reps | Starting weight |
@@ -35,9 +35,9 @@ Each workout is full-body: one push, one pull and one leg exercise, plus two sma
 ### Workout B (Wed)
 | # | Exercise | Sets × Reps | Starting weight |
 |---|----------|-------------|-----------------|
-| 1 | Bent-over two-arm row | 3 × 10 | 20–30 lb |
+| 1 | Romanian deadlift | 3 × 10 | 20–30 lb |
 | 2 | Push-up | 3 × 10 | bodyweight |
-| 3 | Romanian deadlift | 3 × 10 | 20–30 lb |
+| 3 | Bent-over two-arm row | 3 × 10 | 20–30 lb |
 | 4 | Rear delt fly | 3 × 12 | 5–10 lb |
 | 5 | Overhead triceps extension | 3 × 10 | 20–25 lb (one dumbbell) |
 
@@ -45,8 +45,8 @@ Each workout is full-body: one push, one pull and one leg exercise, plus two sma
 | # | Exercise | Sets × Reps | Starting weight |
 |---|----------|-------------|-----------------|
 | 1 | Dumbbell floor press | 3 × 10 | 20–30 lb |
-| 2 | Floor fly | 3 × 12 | 10–15 lb |
-| 3 | Reverse lunge | 3 × 8 each leg | bodyweight–15 lb |
+| 2 | Reverse lunge | 3 × 8 each leg | bodyweight–15 lb |
+| 3 | Floor fly | 3 × 12 | 10–15 lb |
 | 4 | Dumbbell pullover | 3 × 12 | 15–25 lb (one dumbbell) |
 | 5 | Hammer curl | 3 × 10 | 15–20 lb |
 

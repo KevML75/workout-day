@@ -58,9 +58,9 @@ export const WORKOUTS: Record<WorkoutLetter, Exercise[]> = {
     { name: 'Biceps curl', targets: ['Biceps'], sets: 3, reps: 10, weightLb: { min: 15, max: 20 } },
   ],
   B: [
-    { name: 'Bent-over two-arm row', targets: ['Upper back (lats, rhomboids)', 'Biceps'], sets: 3, reps: 10, weightLb: { min: 20, max: 30 } },
-    { name: 'Push-up', targets: ['Chest', 'Shoulders', 'Triceps'], sets: 3, reps: 10 },
     { name: 'Romanian deadlift', targets: ['Hamstrings', 'Glutes', 'Lower back'], sets: 3, reps: 10, weightLb: { min: 20, max: 30 } },
+    { name: 'Push-up', targets: ['Chest', 'Shoulders', 'Triceps'], sets: 3, reps: 10 },
+    { name: 'Bent-over two-arm row', targets: ['Upper back (lats, rhomboids)', 'Biceps'], sets: 3, reps: 10, weightLb: { min: 20, max: 30 } },
     { name: 'Rear delt fly', targets: ['Rear delts', 'Upper back'], sets: 3, reps: 12, weightLb: { min: 5, max: 10 } },
     {
       name: 'Overhead triceps extension',
@@ -73,7 +73,6 @@ export const WORKOUTS: Record<WorkoutLetter, Exercise[]> = {
   ],
   C: [
     { name: 'Dumbbell floor press', targets: ['Chest', 'Triceps'], sets: 3, reps: 10, weightLb: { min: 20, max: 30 } },
-    { name: 'Floor fly', targets: ['Chest'], sets: 3, reps: 12, weightLb: { min: 10, max: 15 } },
     {
       name: 'Reverse lunge',
       targets: ['Quads', 'Glutes'],
@@ -82,6 +81,7 @@ export const WORKOUTS: Record<WorkoutLetter, Exercise[]> = {
       repsNote: 'each leg',
       weightLb: { min: 0, max: 15 },
     },
+    { name: 'Floor fly', targets: ['Chest'], sets: 3, reps: 12, weightLb: { min: 10, max: 15 } },
     {
       name: 'Dumbbell pullover',
       targets: ['Lats', 'Chest'],

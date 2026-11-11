@@ -14,7 +14,7 @@ describe('dateKey', () => {
 describe('dayLogFor', () => {
   it('starts a fresh day at the bottom of each starting range', () => {
     const day = dayLogFor({}, '2026-10-28', 'B', WORKOUTS.B)
-    expect(day.exercises.map((e) => e.weightLb)).toEqual([20, 0, 20, 5, 20])
+    expect(day.exercises.map((e) => e.weightLb)).toEqual([20, 0, 20, 5, 20]) // RDL, push-up, row, fly, ext.
     expect(day.exercises.every((e) => e.sets.length === 0)).toBe(true)
   })
 
@@ -64,7 +64,7 @@ describe('logging sets', () => {
 
   it('steps between bodyweight and the lightest dumbbell when allowed', () => {
     let day = dayLogFor({}, '2026-10-30', 'C', WORKOUTS.C)
-    const lunge = 2
+    const lunge = 1
     expect(day.exercises[lunge].weightLb).toBe(0)
     expect(stepWeight(day, lunge, -1, true).exercises[lunge].weightLb).toBe(0)
     day = stepWeight(day, lunge, 1, true)
@@ -77,7 +77,7 @@ describe('logging sets', () => {
 
   it('starts bodyweight moves at 0', () => {
     const day = dayLogFor({}, '2026-10-30', 'C', WORKOUTS.C)
-    expect(day.exercises.map((e) => e.weightLb)).toEqual([20, 10, 0, 15, 15])
+    expect(day.exercises.map((e) => e.weightLb)).toEqual([20, 0, 10, 15, 15])
   })
 })
 
