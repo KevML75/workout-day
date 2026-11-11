@@ -21,32 +21,37 @@ PowerBlock Elite EXP 90 adjustable dumbbells (5–90 lb per dumbbell, 2.5 lb inc
 ## Workout data
 Store this as a single data file (e.g. `workouts.json` or a typed `workouts.ts`), not hard-coded in components.
 
-### Workout A
+Each workout is full-body: one push, one pull and one leg exercise, plus two smaller ones (rebalanced 2026-11-09 so legs are trained 3×/week and chest 2×/week).
+
+### Workout A (Mon)
 | # | Exercise | Sets × Reps | Starting weight |
 |---|----------|-------------|-----------------|
 | 1 | Overhead press | 3 × 10 | 15–25 lb |
 | 2 | One-arm row | 3 × 10 each arm | 25–35 lb |
-| 3 | Lateral raise | 3 × 12 | 5–10 lb |
-| 4 | Biceps curl | 3 × 10 | 15–20 lb |
-| 5 | Overhead triceps extension | 3 × 10 | 20–25 lb (one dumbbell) |
+| 3 | Goblet squat | 3 × 10 | 25–35 lb (one dumbbell) |
+| 4 | Lateral raise | 3 × 12 | 5–10 lb |
+| 5 | Biceps curl | 3 × 10 | 15–20 lb |
 
-### Workout B
+### Workout B (Wed)
 | # | Exercise | Sets × Reps | Starting weight |
 |---|----------|-------------|-----------------|
 | 1 | Bent-over two-arm row | 3 × 10 | 20–30 lb |
-| 2 | Rear delt fly | 3 × 12 | 5–10 lb |
-| 3 | Dumbbell shrug | 3 × 12 | 30–40 lb |
-| 4 | Hammer curl | 3 × 10 | 15–20 lb |
-| 5 | Triceps kickback | 3 × 12 | 10–15 lb |
+| 2 | Push-up | 3 × 10 | bodyweight |
+| 3 | Romanian deadlift | 3 × 10 | 20–30 lb |
+| 4 | Rear delt fly | 3 × 12 | 5–10 lb |
+| 5 | Overhead triceps extension | 3 × 10 | 20–25 lb (one dumbbell) |
 
-### Workout C (chest, floor-based since there's no bench)
+### Workout C (Fri; floor-based since there's no bench)
 | # | Exercise | Sets × Reps | Starting weight |
 |---|----------|-------------|-----------------|
 | 1 | Dumbbell floor press | 3 × 10 | 20–30 lb |
-| 2 | Push-up | 3 × 10 | bodyweight |
-| 3 | Floor fly | 3 × 12 | 10–15 lb |
+| 2 | Floor fly | 3 × 12 | 10–15 lb |
+| 3 | Reverse lunge | 3 × 8 each leg | bodyweight–15 lb |
 | 4 | Dumbbell pullover | 3 × 12 | 15–25 lb (one dumbbell) |
-| 5 | Squeeze press | 3 × 10 | 15–20 lb |
+| 5 | Hammer curl | 3 × 10 | 15–20 lb |
+
+### Optional rest-day session: Core & mobility (~15 min)
+Dead bug 2 × 8 each side · Bird dog 2 × 8 each side · Glute bridge 2 × 15 · Cat-cow 1 × 10 · World's greatest stretch 1 × 5 each side.
 
 ### Shared notes (show on workout days, collapsed or small)
 - Warm up 5 min with arm circles, plus 1 light set of the first exercise.
@@ -84,8 +89,9 @@ With `PROGRAM_START_MONDAY = 2026-10-26`:
 - Swipe a card left to log a set (right to undo), with a per-exercise weight stepper; each session starts at the weight last used.
 - History screen and JSON export; data is stored on the device.
 - Muscle groups shown on each exercise.
-- Optional ~20 min legs & core session on rest days.
-- Workout C (chest) and a fixed Mon A / Wed B / Fri C week.
+- Optional rest-day session (legs & core at first; core & mobility since the full-body rebalance).
+- Workout C and a fixed Mon A / Wed B / Fri C week.
+- Full-body rebalance: legs and chest spread across A/B/C.
 
 ## Out of scope for now (possible later)
 - Logging actual reps when short of the target.

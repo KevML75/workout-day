@@ -2,8 +2,11 @@
 
 export type WorkoutLetter = 'A' | 'B' | 'C'
 
-/** A scheduled workout, or the optional rest-day session. */
-export type SessionId = WorkoutLetter | 'legs'
+/**
+ * A scheduled workout, or an optional rest-day session. 'legs' was the rest-day session
+ * before legs moved into A/B/C; kept so older history entries still get a title.
+ */
+export type SessionId = WorkoutLetter | 'core' | 'legs'
 
 export interface Exercise {
   name: string
@@ -38,12 +41,27 @@ export const WORKOUT_WEEKDAYS = [1, 3, 5] as const
  */
 export const WEEK_ROTATION: Record<number, WorkoutLetter>[] = [{ 1: 'A', 3: 'B', 5: 'C' }]
 
+// Full-body days: each has a push, a pull and a leg exercise, plus two smaller ones.
 export const WORKOUTS: Record<WorkoutLetter, Exercise[]> = {
   A: [
     { name: 'Overhead press', targets: ['Shoulders', 'Triceps'], sets: 3, reps: 10, weightLb: { min: 15, max: 25 } },
     { name: 'One-arm row', targets: ['Upper back (lats)', 'Biceps'], sets: 3, reps: 10, repsNote: 'each arm', weightLb: { min: 25, max: 35 } },
+    {
+      name: 'Goblet squat',
+      targets: ['Quads', 'Glutes'],
+      sets: 3,
+      reps: 10,
+      weightLb: { min: 25, max: 35 },
+      weightNote: 'one dumbbell',
+    },
     { name: 'Lateral raise', targets: ['Side delts'], sets: 3, reps: 12, weightLb: { min: 5, max: 10 } },
     { name: 'Biceps curl', targets: ['Biceps'], sets: 3, reps: 10, weightLb: { min: 15, max: 20 } },
+  ],
+  B: [
+    { name: 'Bent-over two-arm row', targets: ['Upper back (lats, rhomboids)', 'Biceps'], sets: 3, reps: 10, weightLb: { min: 20, max: 30 } },
+    { name: 'Push-up', targets: ['Chest', 'Shoulders', 'Triceps'], sets: 3, reps: 10 },
+    { name: 'Romanian deadlift', targets: ['Hamstrings', 'Glutes', 'Lower back'], sets: 3, reps: 10, weightLb: { min: 20, max: 30 } },
+    { name: 'Rear delt fly', targets: ['Rear delts', 'Upper back'], sets: 3, reps: 12, weightLb: { min: 5, max: 10 } },
     {
       name: 'Overhead triceps extension',
       targets: ['Triceps'],
@@ -53,26 +71,26 @@ export const WORKOUTS: Record<WorkoutLetter, Exercise[]> = {
       weightNote: 'one dumbbell',
     },
   ],
-  B: [
-    { name: 'Bent-over two-arm row', targets: ['Upper back (lats, rhomboids)', 'Biceps'], sets: 3, reps: 10, weightLb: { min: 20, max: 30 } },
-    { name: 'Rear delt fly', targets: ['Rear delts', 'Upper back'], sets: 3, reps: 12, weightLb: { min: 5, max: 10 } },
-    { name: 'Dumbbell shrug', targets: ['Traps'], sets: 3, reps: 12, weightLb: { min: 30, max: 40 } },
-    { name: 'Hammer curl', targets: ['Biceps', 'Forearms'], sets: 3, reps: 10, weightLb: { min: 15, max: 20 } },
-    { name: 'Triceps kickback', targets: ['Triceps'], sets: 3, reps: 12, weightLb: { min: 10, max: 15 } },
-  ],
   C: [
     { name: 'Dumbbell floor press', targets: ['Chest', 'Triceps'], sets: 3, reps: 10, weightLb: { min: 20, max: 30 } },
-    { name: 'Push-up', targets: ['Chest', 'Shoulders', 'Triceps'], sets: 3, reps: 10 },
     { name: 'Floor fly', targets: ['Chest'], sets: 3, reps: 12, weightLb: { min: 10, max: 15 } },
     {
+      name: 'Reverse lunge',
+      targets: ['Quads', 'Glutes'],
+      sets: 3,
+      reps: 8,
+      repsNote: 'each leg',
+      weightLb: { min: 0, max: 15 },
+    },
+    {
       name: 'Dumbbell pullover',
-      targets: ['Chest', 'Lats'],
+      targets: ['Lats', 'Chest'],
       sets: 3,
       reps: 12,
       weightLb: { min: 15, max: 25 },
       weightNote: 'one dumbbell',
     },
-    { name: 'Squeeze press', targets: ['Inner chest', 'Triceps'], sets: 3, reps: 10, weightLb: { min: 15, max: 20 } },
+    { name: 'Hammer curl', targets: ['Biceps', 'Forearms'], sets: 3, reps: 10, weightLb: { min: 15, max: 20 } },
   ],
 }
 
@@ -89,37 +107,23 @@ export const SESSION_TITLES: Record<SessionId, string> = {
   A: 'Workout A',
   B: 'Workout B',
   C: 'Workout C',
+  core: 'Core & mobility',
   legs: 'Legs & core',
 }
 
-/** Optional rest-day session: lower body and core, so upper-body recovery isn't affected. */
+/** Optional rest-day session: easy core and mobility work, so recovery isn't affected. */
 export const REST_DAY_SESSION = {
-  id: 'legs' as const,
-  duration: '~20 min',
+  id: 'core' as const,
+  duration: '~15 min',
+  blurb: 'Easy core work and stretches. Nothing that gets in the way of recovery.',
   exercises: [
-    {
-      name: 'Goblet squat',
-      targets: ['Quads', 'Glutes'],
-      sets: 3,
-      reps: 10,
-      weightLb: { min: 25, max: 35 },
-      weightNote: 'one dumbbell',
-    },
-    { name: 'Romanian deadlift', targets: ['Hamstrings', 'Glutes'], sets: 3, reps: 10, weightLb: { min: 20, max: 30 } },
-    {
-      name: 'Reverse lunge',
-      targets: ['Quads', 'Glutes'],
-      sets: 2,
-      reps: 8,
-      repsNote: 'each leg',
-      weightLb: { min: 0, max: 15 },
-    },
-    { name: 'Glute bridge', targets: ['Glutes'], sets: 2, reps: 15 },
     { name: 'Dead bug', targets: ['Core'], sets: 2, reps: 8, repsNote: 'each side' },
+    { name: 'Bird dog', targets: ['Core', 'Lower back'], sets: 2, reps: 8, repsNote: 'each side' },
+    { name: 'Glute bridge', targets: ['Glutes', 'Lower back'], sets: 2, reps: 15 },
+    { name: 'Cat-cow', targets: ['Spine mobility'], sets: 1, reps: 10 },
+    { name: "World's greatest stretch", targets: ['Hips', 'Upper back mobility'], sets: 1, reps: 5, repsNote: 'each side' },
   ] satisfies Exercise[],
-  notes: [
-    'Warm up 3 min: march, leg swings, 10 squats.',
-  ],
+  notes: ['Move slowly and breathe out on the effort. This should feel easy.'],
 }
 
 export const REST_NOTE = 'Rest day. A walk or light stretching is a good addition.'

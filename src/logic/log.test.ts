@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { REST_DAY_SESSION, WORKOUTS } from '../data/workouts'
+import { WORKOUTS } from '../data/workouts'
 import { dateKey, dayLogFor, lastWeight, logSet, stepWeight, undoSet, type History } from './log'
 
 const NOW = new Date('2026-10-28T19:00:00Z')
@@ -14,7 +14,7 @@ describe('dateKey', () => {
 describe('dayLogFor', () => {
   it('starts a fresh day at the bottom of each starting range', () => {
     const day = dayLogFor({}, '2026-10-28', 'B', WORKOUTS.B)
-    expect(day.exercises.map((e) => e.weightLb)).toEqual([20, 5, 30, 15, 10])
+    expect(day.exercises.map((e) => e.weightLb)).toEqual([20, 0, 20, 5, 20])
     expect(day.exercises.every((e) => e.sets.length === 0)).toBe(true)
   })
 
@@ -25,7 +25,7 @@ describe('dayLogFor', () => {
       '2026-10-30': dayWithSet('2026-10-30', 'Hammer curl', 25), // later: ignored
     }
     expect(lastWeight(history, 'Hammer curl', '2026-10-28')).toBe(17.5)
-    expect(dayLogFor(history, '2026-10-28', 'B', WORKOUTS.B).exercises[3].weightLb).toBe(17.5)
+    expect(dayLogFor(history, '2026-10-28', 'C', WORKOUTS.C).exercises[4].weightLb).toBe(17.5)
   })
 
   it('returns the saved log for the day', () => {
@@ -63,7 +63,7 @@ describe('logging sets', () => {
   })
 
   it('steps between bodyweight and the lightest dumbbell when allowed', () => {
-    let day = dayLogFor({}, '2026-10-29', 'legs', REST_DAY_SESSION.exercises)
+    let day = dayLogFor({}, '2026-10-30', 'C', WORKOUTS.C)
     const lunge = 2
     expect(day.exercises[lunge].weightLb).toBe(0)
     expect(stepWeight(day, lunge, -1, true).exercises[lunge].weightLb).toBe(0)
@@ -75,9 +75,9 @@ describe('logging sets', () => {
     expect(day.exercises[lunge].weightLb).toBe(0)
   })
 
-  it('starts bodyweight-only moves at 0', () => {
-    const day = dayLogFor({}, '2026-10-29', 'legs', REST_DAY_SESSION.exercises)
-    expect(day.exercises.map((e) => e.weightLb)).toEqual([25, 20, 0, 0, 0])
+  it('starts bodyweight moves at 0', () => {
+    const day = dayLogFor({}, '2026-10-30', 'C', WORKOUTS.C)
+    expect(day.exercises.map((e) => e.weightLb)).toEqual([20, 10, 0, 15, 15])
   })
 })
 

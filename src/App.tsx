@@ -108,10 +108,7 @@ function RestDay({ date, next }: { date: Date; next: NextWorkout }) {
         <h2>
           {SESSION_TITLES[REST_DAY_SESSION.id]} <span>· {REST_DAY_SESSION.duration}</span>
         </h2>
-        <p>
-          {REST_DAY_SESSION.exercises.length} easy exercises for legs and core. They won't affect your
-          upper-body recovery.
-        </p>
+        <p>{REST_DAY_SESSION.blurb}</p>
         <button type="button" className="primary-button" onClick={() => setStarted(true)}>
           Start session
         </button>

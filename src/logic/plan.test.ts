@@ -37,7 +37,7 @@ describe('getTodayPlan (weekly Mon A / Wed B / Fri C)', () => {
     expect(summary(day(iso))).toBe(expected)
   })
 
-  it('returns five chest-focused exercises on Friday', () => {
+  it('returns five exercises, chest first, on Friday', () => {
     const plan = getTodayPlan(day('2026-10-30'), START)
     expect(plan.type).toBe('workout')
     if (plan.type !== 'workout') return
